@@ -26,10 +26,10 @@ Panel {
   readonly property int pinnedTodayCount: root.getPinnedTodayCount()
   readonly property var nextAiring: (scheduleData && scheduleData.nextAiring) ? scheduleData.nextAiring : null
 
-  readonly property string barIconText: "󰚌" + (pinnedTodayCount > 0 ? (" " + pinnedTodayCount) : "")
+  readonly property string barIconText: "放" + (pinnedTodayCount > 0 ? (" " + pinnedTodayCount) : "")
   readonly property string barTooltip: pinnedTodayCount > 0
-    ? ("Omo Anitrack: " + pinnedTodayCount + " pinned anime airing today")
-    : ("Omo Anitrack: " + todayCount + " anime airing today")
+    ? ("Omo Anitrack (放送): " + pinnedTodayCount + " pinned anime airing today")
+    : ("Omo Anitrack (放送): " + todayCount + " anime airing today")
 
   readonly property string fetchScriptPath: Qt.resolvedUrl("fetch.sh").toString().replace("file://", "")
   readonly property string actionScriptPath: Qt.resolvedUrl("action.sh").toString().replace("file://", "")
@@ -231,10 +231,11 @@ Panel {
             spacing: Style.space(10)
 
             Text {
-              text: "󰚌"
+              text: "放"
               color: root.bar.foreground
               font.family: root.bar.fontFamily
               font.pixelSize: Style.font.title
+              font.bold: true
               anchors.verticalCenter: parent.verticalCenter
             }
 
@@ -353,10 +354,11 @@ Panel {
               spacing: Style.space(6)
 
               Text {
-                text: "󰚌"
+                text: "放"
                 color: root.bar.foreground
                 font.family: root.bar.fontFamily
                 font.pixelSize: Style.font.caption
+                font.bold: true
               }
 
               Text {
