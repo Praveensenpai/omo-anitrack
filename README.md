@@ -5,7 +5,7 @@ A sleek, native status bar widget and popover schedule tracker for **currently a
 Powered by the free, public **AniList GraphQL API**.
 
 <p align="center">
-  <img src="preview.png" alt="Omo Anitrack Preview" width="480">
+  <img src="assets/preview.png" alt="Omo Anitrack Preview" width="480">
 </p>
 
 ---
