@@ -313,7 +313,7 @@ Panel {
               spacing: Style.space(6)
 
               Text {
-                text: "󰓎"
+                text: ""
                 color: root.bar.foreground
                 font.family: root.bar.fontFamily
                 font.pixelSize: Style.font.caption
@@ -534,7 +534,7 @@ Panel {
 
             Text {
               anchors.horizontalCenter: parent.horizontalCenter
-              text: "󰓏"
+              text: ""
               color: Qt.darker(root.bar.foreground, 1.4)
               font.family: root.bar.fontFamily
               font.pixelSize: Style.space(36)
@@ -757,7 +757,7 @@ Panel {
 
                 Text {
                   anchors.centerIn: parent
-                  text: card.isPinned ? "󰓎" : "󰓏"
+                  text: card.isPinned ? "" : ""
                   color: card.isPinned ? root.bar.foreground : Qt.darker(root.bar.foreground, 1.5)
                   font.family: root.bar.fontFamily
                   font.pixelSize: Style.font.body
