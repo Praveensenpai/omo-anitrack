@@ -13,6 +13,7 @@ Panel {
   property var scheduleData: ({})
   property string selectedTab: (scheduleData && scheduleData.pinnedCount > 0) ? "pinned" : "all"
   property string dayFilter: "today" // "today", "tomorrow", "this_week", "all"
+  property string searchQuery: ""
   property int currentTimestamp: Math.floor(Date.now() / 1000)
 
   readonly property var shows: (scheduleData && scheduleData.shows) ? scheduleData.shows : []
@@ -49,12 +50,22 @@ Panel {
   function getFilteredShows() {
     var list = root.shows || []
     if (root.selectedTab === "pinned") {
-      return list.filter(function(item) { return item.pinned === true })
+      list = list.filter(function(item) { return item.pinned === true })
+    } else if (root.dayFilter !== "all") {
+      list = list.filter(function(item) { return item.dayGroup === root.dayFilter })
     }
-    if (root.dayFilter === "all") {
-      return list
+
+    var q = (root.searchQuery || "").trim().toLowerCase()
+    if (q.length > 0) {
+      list = list.filter(function(item) {
+        var t1 = (item.title || "").toLowerCase()
+        var t2 = (item.titleEnglish || "").toLowerCase()
+        var t3 = (item.titleNative || "").toLowerCase()
+        var g = (item.genres || []).join(" ").toLowerCase()
+        return t1.indexOf(q) !== -1 || t2.indexOf(q) !== -1 || t3.indexOf(q) !== -1 || g.indexOf(q) !== -1
+      })
     }
-    return list.filter(function(item) { return item.dayGroup === root.dayFilter })
+    return list
   }
 
   function reloadData() {
@@ -318,10 +329,97 @@ Panel {
           }
         }
 
+        // ---------- Search Bar ----------
+        Rectangle {
+          width: parent.width
+          height: Style.space(32)
+          radius: Style.space(6)
+          color: Qt.rgba(root.bar.foreground.r, root.bar.foreground.g, root.bar.foreground.b, 0.08)
+          border.width: 1
+          border.color: searchInput.activeFocus
+            ? Qt.rgba(root.bar.foreground.r, root.bar.foreground.g, root.bar.foreground.b, 0.35)
+            : Qt.rgba(root.bar.foreground.r, root.bar.foreground.g, root.bar.foreground.b, 0.10)
+
+          Row {
+            anchors.left: parent.left
+            anchors.leftMargin: Style.space(10)
+            anchors.right: clearSearchBtn.left
+            anchors.rightMargin: Style.space(6)
+            anchors.verticalCenter: parent.verticalCenter
+            spacing: Style.space(8)
+
+            Text {
+              text: "󰍉"
+              color: Qt.darker(root.bar.foreground, 1.4)
+              font.family: root.bar.fontFamily
+              font.pixelSize: Style.font.caption
+              anchors.verticalCenter: parent.verticalCenter
+            }
+
+            Item {
+              width: parent.width - Style.space(24)
+              height: parent.height
+
+              TextInput {
+                id: searchInput
+                anchors.fill: parent
+                color: root.bar.foreground
+                font.family: root.bar.fontFamily
+                font.pixelSize: Style.font.body
+                selectByMouse: true
+                verticalAlignment: TextInput.AlignVCenter
+                onTextChanged: root.searchQuery = text
+              }
+
+              Text {
+                anchors.fill: parent
+                text: "Search anime by title or genre..."
+                color: Qt.darker(root.bar.foreground, 1.6)
+                font.family: root.bar.fontFamily
+                font.pixelSize: Style.font.caption
+                verticalAlignment: Text.AlignVCenter
+                visible: !searchInput.text && !searchInput.activeFocus
+              }
+            }
+          }
+
+          // Clear search button
+          Rectangle {
+            id: clearSearchBtn
+            visible: searchInput.text.length > 0
+            anchors.right: parent.right
+            anchors.rightMargin: Style.space(6)
+            anchors.verticalCenter: parent.verticalCenter
+            width: Style.space(20)
+            height: Style.space(20)
+            radius: Style.space(10)
+            color: clearSearchArea.containsMouse
+              ? Qt.rgba(root.bar.foreground.r, root.bar.foreground.g, root.bar.foreground.b, 0.20)
+              : "transparent"
+
+            Text {
+              anchors.centerIn: parent
+              text: "✕"
+              color: root.bar.foreground
+              font.pixelSize: Style.font.caption
+            }
+
+            MouseArea {
+              id: clearSearchArea
+              anchors.fill: parent
+              hoverEnabled: true
+              onClicked: {
+                searchInput.text = ""
+                root.searchQuery = ""
+              }
+            }
+          }
+        }
+
         // ---------- Sub-filter Pills (When in All Tab) ----------
         Row {
           width: parent.width
-          visible: root.selectedTab === "all"
+          visible: root.selectedTab === "all" && root.searchQuery.length === 0
           spacing: Style.space(6)
 
           Repeater {
@@ -378,7 +476,7 @@ Panel {
           // Empty state for Pinned tab
           Column {
             anchors.centerIn: parent
-            visible: root.selectedTab === "pinned" && root.getFilteredShows().length === 0
+            visible: root.selectedTab === "pinned" && root.getFilteredShows().length === 0 && root.searchQuery.length === 0
             spacing: Style.space(8)
             width: parent.width * 0.85
 
@@ -403,6 +501,37 @@ Panel {
               wrapMode: Text.Wrap
               width: parent.width
               text: "Click the star icon ⭐ on any anime in the 'All Shows' tab to track it here!"
+              color: Qt.darker(root.bar.foreground, 1.4)
+              font.family: root.bar.fontFamily
+              font.pixelSize: Style.font.caption
+            }
+          }
+
+          // Empty state for Search
+          Column {
+            anchors.centerIn: parent
+            visible: root.searchQuery.length > 0 && root.getFilteredShows().length === 0
+            spacing: Style.space(8)
+            width: parent.width * 0.85
+
+            Text {
+              anchors.horizontalCenter: parent.horizontalCenter
+              text: "🔍"
+              font.pixelSize: Style.space(32)
+            }
+
+            Text {
+              anchors.horizontalCenter: parent.horizontalCenter
+              text: "No Matching Anime"
+              color: root.bar.foreground
+              font.family: root.bar.fontFamily
+              font.pixelSize: Style.font.body
+              font.bold: true
+            }
+
+            Text {
+              anchors.horizontalCenter: parent.horizontalCenter
+              text: "No shows found for \"" + root.searchQuery + "\""
               color: Qt.darker(root.bar.foreground, 1.4)
               font.family: root.bar.fontFamily
               font.pixelSize: Style.font.caption
