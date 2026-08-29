@@ -49,15 +49,13 @@ Panel {
 
   function getFilteredShows() {
     var list = root.shows || []
-    if (root.selectedTab === "pinned") {
-      list = list.filter(function(item) { return item.pinned === true })
-    } else if (root.dayFilter !== "all") {
-      list = list.filter(function(item) { return item.dayGroup === root.dayFilter })
-    }
-
     var q = (root.searchQuery || "").trim().toLowerCase()
+
     if (q.length > 0) {
-      list = list.filter(function(item) {
+      if (root.selectedTab === "pinned") {
+        list = list.filter(function(item) { return item.pinned === true })
+      }
+      return list.filter(function(item) {
         var t1 = (item.title || "").toLowerCase()
         var t2 = (item.titleEnglish || "").toLowerCase()
         var t3 = (item.titleNative || "").toLowerCase()
@@ -65,7 +63,14 @@ Panel {
         return t1.indexOf(q) !== -1 || t2.indexOf(q) !== -1 || t3.indexOf(q) !== -1 || g.indexOf(q) !== -1
       })
     }
-    return list
+
+    if (root.selectedTab === "pinned") {
+      return list.filter(function(item) { return item.pinned === true })
+    }
+    if (root.dayFilter === "all") {
+      return list
+    }
+    return list.filter(function(item) { return item.dayGroup === root.dayFilter })
   }
 
   function reloadData() {

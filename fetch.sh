@@ -18,27 +18,24 @@ END_WEEK=$(date -d "+7 days 23:59:59" +%s)
 
 QUERY=$(cat << GRAPHQL
 query {
-  Page(page: 1, perPage: 50) {
+  p1: Page(page: 1, perPage: 50) {
     airingSchedules(airingAt_greater: $START_TODAY, airingAt_lesser: $END_WEEK, sort: TIME) {
-      id
-      episode
-      airingAt
-      timeUntilAiring
-      media {
-        id
-        title {
-          romaji
-          english
-          native
-        }
-        coverImage {
-          medium
-          large
-        }
-        siteUrl
-        genres
-        episodes
-      }
+      id episode airingAt timeUntilAiring media { id title { romaji english native } coverImage { medium large } siteUrl genres episodes }
+    }
+  }
+  p2: Page(page: 2, perPage: 50) {
+    airingSchedules(airingAt_greater: $START_TODAY, airingAt_lesser: $END_WEEK, sort: TIME) {
+      id episode airingAt timeUntilAiring media { id title { romaji english native } coverImage { medium large } siteUrl genres episodes }
+    }
+  }
+  p3: Page(page: 3, perPage: 50) {
+    airingSchedules(airingAt_greater: $START_TODAY, airingAt_lesser: $END_WEEK, sort: TIME) {
+      id episode airingAt timeUntilAiring media { id title { romaji english native } coverImage { medium large } siteUrl genres episodes }
+    }
+  }
+  p4: Page(page: 4, perPage: 50) {
+    airingSchedules(airingAt_greater: $START_TODAY, airingAt_lesser: $END_WEEK, sort: TIME) {
+      id episode airingAt timeUntilAiring media { id title { romaji english native } coverImage { medium large } siteUrl genres episodes }
     }
   }
 }
@@ -51,7 +48,7 @@ RAW_JSON=$(curl -s --max-time 10 -X POST https://graphql.anilist.co \
   -H "Content-Type: application/json" \
   -d "$PAYLOAD" || true)
 
-if [ -z "$RAW_JSON" ] || ! echo "$RAW_JSON" | jq -e '.data.Page.airingSchedules' >/dev/null 2>&1; then
+if [ -z "$RAW_JSON" ] || ! echo "$RAW_JSON" | jq -e '.data.p1.airingSchedules' >/dev/null 2>&1; then
   # If offline or API failure, keep existing cache if available
   if [ -f "$OUTPUT_FILE" ]; then
     exit 0
@@ -68,7 +65,7 @@ PARSED=$(echo "$RAW_JSON" | jq \
   --argjson startToday "$START_TODAY" \
   --argjson endToday "$END_TODAY" \
   --argjson endTomorrow "$END_TOMORROW" '
-  .data.Page.airingSchedules
+  ([.data.p1.airingSchedules[], .data.p2.airingSchedules[], .data.p3.airingSchedules[], .data.p4.airingSchedules[]] | unique_by(.id))
   | map(
       . as $item
       | ($item.media.id) as $mid
