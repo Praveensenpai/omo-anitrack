@@ -409,25 +409,39 @@ Panel {
             }
           }
 
-          ScrollView {
-            id: scroll
+          ListView {
+            id: list
             anchors.fill: parent
-            contentWidth: parent.width
-            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-            ScrollBar.vertical.policy: ScrollBar.AsNeeded
+            clip: true
+            spacing: Style.space(8)
+            model: root.getFilteredShows()
+            boundsBehavior: Flickable.StopAtBounds
+            cacheBuffer: 1500
+            flickDeceleration: 1500
+            maximumFlickVelocity: 3500
 
-            ListView {
-              id: list
-              width: parent.width
-              spacing: Style.space(8)
-              model: root.getFilteredShows()
+            ScrollBar.vertical: ScrollBar {
+              policy: ScrollBar.AsNeeded
+            }
 
-              delegate: Rectangle {
-                id: card
-                width: list.width
-                height: Style.space(66)
-                radius: Style.space(6)
-                color: cardArea.containsMouse
+            MouseArea {
+              anchors.fill: parent
+              acceptedButtons: Qt.NoButton
+              onWheel: function(wheel) {
+                if (wheel.angleDelta.y !== 0) {
+                  var step = (wheel.angleDelta.y / 120) * Style.space(90)
+                  list.contentY = Math.max(0, Math.min(Math.max(0, list.contentHeight - list.height), list.contentY - step))
+                  wheel.accepted = true
+                }
+              }
+            }
+
+            delegate: Rectangle {
+              id: card
+              width: list.width
+              height: Style.space(66)
+              radius: Style.space(6)
+              color: cardArea.containsMouse
                   ? Qt.rgba(root.bar.foreground.r, root.bar.foreground.g, root.bar.foreground.b, 0.15)
                   : Qt.rgba(root.bar.foreground.r, root.bar.foreground.g, root.bar.foreground.b, 0.05)
 
@@ -594,7 +608,6 @@ Panel {
               }
             }
           }
-        }
 
         // ---------- Footer Shortcut / Source Hint ----------
         Item {
