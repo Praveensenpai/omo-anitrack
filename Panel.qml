@@ -26,7 +26,7 @@ Panel {
   readonly property int pinnedTodayCount: root.getPinnedTodayCount()
   readonly property var nextAiring: (scheduleData && scheduleData.nextAiring) ? scheduleData.nextAiring : null
 
-  readonly property string barIconText: "󰚌"
+  readonly property string barIconText: ""
   readonly property string barTooltip: pinnedTodayCount > 0
     ? ("Omo Anitrack: " + pinnedTodayCount + " pinned anime airing today")
     : ("Omo Anitrack: " + todayCount + " anime airing today")
