@@ -26,10 +26,10 @@ Panel {
   readonly property int pinnedTodayCount: root.getPinnedTodayCount()
   readonly property var nextAiring: (scheduleData && scheduleData.nextAiring) ? scheduleData.nextAiring : null
 
-  readonly property string barIconText: "放"
+  readonly property string barIconText: "󰚌"
   readonly property string barTooltip: pinnedTodayCount > 0
-    ? ("Omo Anitrack (放送): " + pinnedTodayCount + " pinned anime airing today")
-    : ("Omo Anitrack (放送): " + todayCount + " anime airing today")
+    ? ("Omo Anitrack: " + pinnedTodayCount + " pinned anime airing today")
+    : ("Omo Anitrack: " + todayCount + " anime airing today")
 
   readonly property string fetchScriptPath: Qt.resolvedUrl("fetch.sh").toString().replace("file://", "")
   readonly property string actionScriptPath: Qt.resolvedUrl("action.sh").toString().replace("file://", "")
