@@ -703,15 +703,16 @@ Panel {
                 // Pin / Star Button
                 Rectangle {
                   id: pinBtn
+                  z: 10
                   anchors.right: parent.right
                   anchors.rightMargin: Style.space(8)
                   anchors.verticalCenter: parent.verticalCenter
-                  width: Style.space(32)
-                  height: Style.space(32)
+                  width: Style.space(34)
+                  height: Style.space(34)
                   radius: Style.space(6)
                   color: pinArea.containsMouse
                     ? Qt.rgba(root.bar.foreground.r, root.bar.foreground.g, root.bar.foreground.b, 0.2)
-                    : "transparent"
+                    : (modelData.pinned ? Qt.rgba(0.97, 0.81, 0.41, 0.15) : "transparent")
 
                   Text {
                     anchors.centerIn: parent
@@ -724,7 +725,20 @@ Panel {
                     id: pinArea
                     anchors.fill: parent
                     hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
                     onClicked: {
+                      // Instant optimistic in-memory update
+                      var s = root.scheduleData
+                      if (s && s.shows) {
+                        for (var i = 0; i < s.shows.length; i++) {
+                          if (s.shows[i].mediaId === modelData.mediaId) {
+                            s.shows[i].pinned = !s.shows[i].pinned
+                          }
+                        }
+                        s.pinnedCount = s.shows.filter(function(x) { return x.pinned }).length
+                        s.pinnedTodayCount = s.shows.filter(function(x) { return x.pinned && x.dayGroup === "today" }).length
+                        root.scheduleData = Object.assign({}, s)
+                      }
                       root.triggerAction("pin", modelData.mediaId)
                     }
                   }
@@ -733,8 +747,12 @@ Panel {
                 // Click Card Area (opens AniList in browser)
                 MouseArea {
                   id: cardArea
-                  anchors.fill: parent
-                  anchors.rightMargin: Style.space(42) // Leave space for pin button
+                  z: 1
+                  anchors.left: parent.left
+                  anchors.top: parent.top
+                  anchors.bottom: parent.bottom
+                  anchors.right: pinBtn.left
+                  anchors.rightMargin: Style.space(4)
                   hoverEnabled: true
                   cursorShape: Qt.PointingHandCursor
                   onClicked: {
