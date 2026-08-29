@@ -253,26 +253,43 @@ Panel {
               }
 
               Text {
-                text: "AIRING SCHEDULE & WATCHLIST"
-                color: Qt.darker(root.bar.foreground, 1.4)
+                text: actionProc.running ? "● FETCHING ANILIST..." : "AIRING SCHEDULE & WATCHLIST"
+                color: actionProc.running ? root.bar.foreground : Qt.darker(root.bar.foreground, 1.4)
                 font.family: root.bar.fontFamily
                 font.pixelSize: Style.font.caption
                 font.bold: true
                 font.letterSpacing: 1.1
+
+                SequentialAnimation on opacity {
+                  running: actionProc.running
+                  loops: Animation.Infinite
+                  NumberAnimation { from: 1.0; to: 0.35; duration: 450; easing.type: Easing.InOutQuad }
+                  NumberAnimation { from: 0.35; to: 1.0; duration: 450; easing.type: Easing.InOutQuad }
+                }
               }
             }
           }
 
           // Refresh Button
           Rectangle {
+            id: refreshBtn
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
             width: Style.space(32)
             height: Style.space(32)
             radius: Style.space(6)
-            color: refreshArea.containsMouse
-              ? Qt.rgba(root.bar.foreground.r, root.bar.foreground.g, root.bar.foreground.b, 0.15)
-              : Qt.rgba(root.bar.foreground.r, root.bar.foreground.g, root.bar.foreground.b, 0.06)
+            color: actionProc.running
+              ? Qt.rgba(root.bar.foreground.r, root.bar.foreground.g, root.bar.foreground.b, 0.20)
+              : (refreshArea.containsMouse
+                  ? Qt.rgba(root.bar.foreground.r, root.bar.foreground.g, root.bar.foreground.b, 0.15)
+                  : Qt.rgba(root.bar.foreground.r, root.bar.foreground.g, root.bar.foreground.b, 0.06))
+
+            SequentialAnimation on opacity {
+              running: actionProc.running
+              loops: Animation.Infinite
+              NumberAnimation { from: 1.0; to: 0.40; duration: 450; easing.type: Easing.InOutQuad }
+              NumberAnimation { from: 0.40; to: 1.0; duration: 450; easing.type: Easing.InOutQuad }
+            }
 
             Text {
               id: refreshIcon
@@ -281,14 +298,6 @@ Panel {
               color: root.bar.foreground
               font.family: root.bar.fontFamily
               font.pixelSize: Style.font.body
-
-              RotationAnimator on rotation {
-                from: 0
-                to: 360
-                duration: 750
-                loops: Animation.Infinite
-                running: actionProc.running
-              }
             }
 
             MouseArea {
@@ -300,6 +309,30 @@ Panel {
               onClicked: {
                 root.triggerAction("refresh")
               }
+            }
+          }
+        }
+
+        // ---------- Sweeping Progress Bar (Active while updating) ----------
+        Rectangle {
+          width: parent.width
+          height: Style.space(2)
+          radius: 1
+          color: Qt.rgba(root.bar.foreground.r, root.bar.foreground.g, root.bar.foreground.b, 0.06)
+          visible: actionProc.running
+          clip: true
+
+          Rectangle {
+            id: progressBar
+            width: parent.width * 0.35
+            height: parent.height
+            radius: 1
+            color: root.bar.foreground
+
+            SequentialAnimation on x {
+              running: actionProc.running
+              loops: Animation.Infinite
+              NumberAnimation { from: -progressBar.width; to: parent.width; duration: 850; easing.type: Easing.InOutSine }
             }
           }
         }
