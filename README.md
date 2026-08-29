@@ -9,6 +9,7 @@ Powered by the free, public **AniList GraphQL API**.
 ## ✨ Features
 
 - **Live Release Countdowns**: Accurate countdowns (`🟢 In 35m`, `🟡 Tomorrow`, `⚪ Aired`) calculated locally with zero network battery drain.
+- **🔍 Instant Live Search**: Search anime in real-time across Romaji, English, Japanese native titles, and genres.
 - **⭐ Pinned Watchlist**: Star your favorite seasonal shows to track only what you watch in the **Pinned** tab.
 - **Multi-Day Schedule**: Easily switch between **Today**, **Tomorrow**, and **This Week**.
 - **Rich Anime Cards**: HD cover thumbnails, Romaji and Japanese native titles, episode pills (`Ep 8 / 12`), and genre tags.
