@@ -429,7 +429,7 @@ Panel {
               acceptedButtons: Qt.NoButton
               onWheel: function(wheel) {
                 if (wheel.angleDelta.y !== 0) {
-                  var step = (wheel.angleDelta.y / 120) * Style.space(90)
+                  var step = (wheel.angleDelta.y / 120) * Style.space(46)
                   list.contentY = Math.max(0, Math.min(Math.max(0, list.contentHeight - list.height), list.contentY - step))
                   wheel.accepted = true
                 }
