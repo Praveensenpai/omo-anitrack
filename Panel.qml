@@ -14,6 +14,7 @@ Panel {
   property string selectedTab: (scheduleData && scheduleData.pinnedCount > 0) ? "pinned" : "all"
   property string dayFilter: "today" // "today", "tomorrow", "this_week", "all"
   property string searchQuery: ""
+  property var pinnedMap: ({})
   property int currentTimestamp: Math.floor(Date.now() / 1000)
 
   readonly property var shows: (scheduleData && scheduleData.shows) ? scheduleData.shows : []
@@ -21,8 +22,8 @@ Panel {
   readonly property int tomorrowCount: (scheduleData && scheduleData.tomorrowCount) ? scheduleData.tomorrowCount : 0
   readonly property int thisWeekCount: (scheduleData && scheduleData.thisWeekCount) ? scheduleData.thisWeekCount : 0
   readonly property int allCount: (scheduleData && scheduleData.allCount) ? scheduleData.allCount : (shows ? shows.length : 0)
-  readonly property int pinnedCount: (scheduleData && scheduleData.pinnedCount) ? scheduleData.pinnedCount : 0
-  readonly property int pinnedTodayCount: (scheduleData && scheduleData.pinnedTodayCount) ? scheduleData.pinnedTodayCount : 0
+  readonly property int pinnedCount: root.getPinnedCount()
+  readonly property int pinnedTodayCount: root.getPinnedTodayCount()
   readonly property var nextAiring: (scheduleData && scheduleData.nextAiring) ? scheduleData.nextAiring : null
 
   readonly property string barIconText: "🎌" + (pinnedTodayCount > 0 ? (" " + pinnedTodayCount) : "")
@@ -33,6 +34,31 @@ Panel {
   readonly property string fetchScriptPath: Qt.resolvedUrl("fetch.sh").toString().replace("file://", "")
   readonly property string actionScriptPath: Qt.resolvedUrl("action.sh").toString().replace("file://", "")
   readonly property string cacheFilePath: "file://" + Quickshell.env("HOME") + "/.cache/omarchy/anitrack_schedule.json"
+
+  function isMediaPinned(mediaId, defaultPinned) {
+    if (root.pinnedMap && root.pinnedMap.hasOwnProperty(mediaId)) {
+      return root.pinnedMap[mediaId] === true
+    }
+    return defaultPinned === true
+  }
+
+  function getPinnedCount() {
+    var count = 0
+    var list = root.shows || []
+    for (var i = 0; i < list.length; i++) {
+      if (root.isMediaPinned(list[i].mediaId, list[i].pinned)) count++
+    }
+    return count
+  }
+
+  function getPinnedTodayCount() {
+    var count = 0
+    var list = root.shows || []
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].dayGroup === "today" && root.isMediaPinned(list[i].mediaId, list[i].pinned)) count++
+    }
+    return count
+  }
 
   function formatCountdown(airingAt) {
     var diff = airingAt - root.currentTimestamp
@@ -56,7 +82,7 @@ Panel {
 
     if (q.length > 0) {
       if (root.selectedTab === "pinned") {
-        list = list.filter(function(item) { return item.pinned === true })
+        list = list.filter(function(item) { return root.isMediaPinned(item.mediaId, item.pinned) })
       }
       return list.filter(function(item) {
         var t1 = (item.title || "").toLowerCase()
@@ -68,7 +94,7 @@ Panel {
     }
 
     if (root.selectedTab === "pinned") {
-      return list.filter(function(item) { return item.pinned === true })
+      return list.filter(function(item) { return root.isMediaPinned(item.mediaId, item.pinned) })
     }
     if (root.dayFilter === "all") {
       return list
@@ -112,6 +138,13 @@ Panel {
         var parsed = JSON.parse(text())
         if (parsed && parsed.shows) {
           root.scheduleData = parsed
+          var map = {}
+          for (var i = 0; i < parsed.shows.length; i++) {
+            if (parsed.shows[i].pinned) {
+              map[parsed.shows[i].mediaId] = true
+            }
+          }
+          root.pinnedMap = map
         }
       } catch (e) {
         // Fallback gracefully on parsing error
@@ -578,6 +611,7 @@ Panel {
               width: list.width
               height: Style.space(66)
               radius: Style.space(6)
+              readonly property bool isPinned: root.isMediaPinned(modelData.mediaId, modelData.pinned)
               color: cardArea.containsMouse
                   ? Qt.rgba(root.bar.foreground.r, root.bar.foreground.g, root.bar.foreground.b, 0.15)
                   : Qt.rgba(root.bar.foreground.r, root.bar.foreground.g, root.bar.foreground.b, 0.05)
@@ -712,12 +746,12 @@ Panel {
                   radius: Style.space(6)
                   color: pinArea.containsMouse
                     ? Qt.rgba(root.bar.foreground.r, root.bar.foreground.g, root.bar.foreground.b, 0.2)
-                    : (modelData.pinned ? Qt.rgba(0.97, 0.81, 0.41, 0.15) : "transparent")
+                    : (card.isPinned ? Qt.rgba(0.97, 0.81, 0.41, 0.15) : "transparent")
 
                   Text {
                     anchors.centerIn: parent
-                    text: modelData.pinned ? "⭐" : "☆"
-                    color: modelData.pinned ? "#f7cf68" : Qt.darker(root.bar.foreground, 1.4)
+                    text: card.isPinned ? "⭐" : "☆"
+                    color: card.isPinned ? "#f7cf68" : Qt.darker(root.bar.foreground, 1.4)
                     font.pixelSize: Style.font.body
                   }
 
@@ -727,18 +761,10 @@ Panel {
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
-                      // Instant optimistic in-memory update
-                      var s = root.scheduleData
-                      if (s && s.shows) {
-                        for (var i = 0; i < s.shows.length; i++) {
-                          if (s.shows[i].mediaId === modelData.mediaId) {
-                            s.shows[i].pinned = !s.shows[i].pinned
-                          }
-                        }
-                        s.pinnedCount = s.shows.filter(function(x) { return x.pinned }).length
-                        s.pinnedTodayCount = s.shows.filter(function(x) { return x.pinned && x.dayGroup === "today" }).length
-                        root.scheduleData = Object.assign({}, s)
-                      }
+                      var nextState = !card.isPinned
+                      var m = Object.assign({}, root.pinnedMap)
+                      m[modelData.mediaId] = nextState
+                      root.pinnedMap = m
                       root.triggerAction("pin", modelData.mediaId)
                     }
                   }
