@@ -18,6 +18,9 @@ Panel {
 
   readonly property var shows: (scheduleData && scheduleData.shows) ? scheduleData.shows : []
   readonly property int todayCount: (scheduleData && scheduleData.todayCount) ? scheduleData.todayCount : 0
+  readonly property int tomorrowCount: (scheduleData && scheduleData.tomorrowCount) ? scheduleData.tomorrowCount : 0
+  readonly property int thisWeekCount: (scheduleData && scheduleData.thisWeekCount) ? scheduleData.thisWeekCount : 0
+  readonly property int allCount: (scheduleData && scheduleData.allCount) ? scheduleData.allCount : (shows ? shows.length : 0)
   readonly property int pinnedCount: (scheduleData && scheduleData.pinnedCount) ? scheduleData.pinnedCount : 0
   readonly property int pinnedTodayCount: (scheduleData && scheduleData.pinnedTodayCount) ? scheduleData.pinnedTodayCount : 0
   readonly property var nextAiring: (scheduleData && scheduleData.nextAiring) ? scheduleData.nextAiring : null
@@ -430,9 +433,9 @@ Panel {
           Repeater {
             model: [
               { id: "today", label: "Today (" + root.todayCount + ")" },
-              { id: "tomorrow", label: "Tomorrow" },
-              { id: "this_week", label: "This Week" },
-              { id: "all", label: "All" }
+              { id: "tomorrow", label: "Tomorrow (" + root.tomorrowCount + ")" },
+              { id: "this_week", label: "Week (" + root.thisWeekCount + ")" },
+              { id: "all", label: "All (" + root.allCount + ")" }
             ]
 
             Rectangle {

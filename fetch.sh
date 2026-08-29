@@ -94,6 +94,9 @@ PARSED=$(echo "$RAW_JSON" | jq \
   | {
       shows: .,
       todayCount: (map(select(.dayGroup == "today")) | length),
+      tomorrowCount: (map(select(.dayGroup == "tomorrow")) | length),
+      thisWeekCount: (map(select(.dayGroup == "this_week")) | length),
+      allCount: length,
       pinnedCount: (map(select(.pinned)) | length),
       pinnedTodayCount: (map(select(.pinned and .dayGroup == "today")) | length),
       nextAiring: (map(select(.airingAt > $now)) | first // null),
