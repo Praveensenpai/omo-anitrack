@@ -26,7 +26,7 @@ Panel {
   readonly property int pinnedTodayCount: root.getPinnedTodayCount()
   readonly property var nextAiring: (scheduleData && scheduleData.nextAiring) ? scheduleData.nextAiring : null
 
-  readonly property string barIconText: "🎌" + (pinnedTodayCount > 0 ? (" " + pinnedTodayCount) : "")
+  readonly property string barIconText: "󰚌" + (pinnedTodayCount > 0 ? (" " + pinnedTodayCount) : "")
   readonly property string barTooltip: pinnedTodayCount > 0
     ? ("Omo Anitrack: " + pinnedTodayCount + " pinned anime airing today")
     : ("Omo Anitrack: " + todayCount + " anime airing today")
@@ -119,7 +119,6 @@ Panel {
     if (opened) {
       root.currentTimestamp = Math.floor(Date.now() / 1000)
       reloadData()
-      // Refresh if no data or cache older than 30m
       if (!root.shows || root.shows.length === 0) {
         root.triggerAction("refresh")
       }
@@ -232,7 +231,9 @@ Panel {
             spacing: Style.space(10)
 
             Text {
-              text: "🎌"
+              text: "󰚌"
+              color: root.bar.foreground
+              font.family: root.bar.fontFamily
               font.pixelSize: Style.font.title
               anchors.verticalCenter: parent.verticalCenter
             }
@@ -242,7 +243,7 @@ Panel {
               spacing: Style.space(1)
 
               Text {
-                text: "Omo Anitrack"
+                text: "ANIME SCHEDULE"
                 color: root.bar.foreground
                 font.family: root.bar.fontFamily
                 font.pixelSize: Style.font.title
@@ -283,6 +284,7 @@ Panel {
               id: refreshArea
               anchors.fill: parent
               hoverEnabled: true
+              cursorShape: Qt.PointingHandCursor
               onClicked: {
                 root.triggerAction("refresh")
               }
@@ -311,7 +313,9 @@ Panel {
               spacing: Style.space(6)
 
               Text {
-                text: "⭐"
+                text: "󰓎"
+                color: root.bar.foreground
+                font.family: root.bar.fontFamily
                 font.pixelSize: Style.font.caption
               }
 
@@ -328,6 +332,7 @@ Panel {
               id: pinnedTabArea
               anchors.fill: parent
               hoverEnabled: true
+              cursorShape: Qt.PointingHandCursor
               onClicked: root.selectedTab = "pinned"
             }
           }
@@ -348,7 +353,9 @@ Panel {
               spacing: Style.space(6)
 
               Text {
-                text: "🌐"
+                text: "󰚌"
+                color: root.bar.foreground
+                font.family: root.bar.fontFamily
                 font.pixelSize: Style.font.caption
               }
 
@@ -365,6 +372,7 @@ Panel {
               id: allTabArea
               anchors.fill: parent
               hoverEnabled: true
+              cursorShape: Qt.PointingHandCursor
               onClicked: root.selectedTab = "all"
             }
           }
@@ -440,8 +448,9 @@ Panel {
 
             Text {
               anchors.centerIn: parent
-              text: "✕"
+              text: "󰅖"
               color: root.bar.foreground
+              font.family: root.bar.fontFamily
               font.pixelSize: Style.font.caption
             }
 
@@ -449,6 +458,7 @@ Panel {
               id: clearSearchArea
               anchors.fill: parent
               hoverEnabled: true
+              cursorShape: Qt.PointingHandCursor
               onClicked: {
                 searchInput.text = ""
                 root.searchQuery = ""
@@ -498,6 +508,7 @@ Panel {
                 id: filterArea
                 anchors.fill: parent
                 hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
                 onClicked: root.dayFilter = modelData.id
               }
             }
@@ -523,7 +534,9 @@ Panel {
 
             Text {
               anchors.horizontalCenter: parent.horizontalCenter
-              text: "⭐"
+              text: "󰓏"
+              color: Qt.darker(root.bar.foreground, 1.4)
+              font.family: root.bar.fontFamily
               font.pixelSize: Style.space(36)
             }
 
@@ -541,7 +554,7 @@ Panel {
               horizontalAlignment: Text.AlignHCenter
               wrapMode: Text.Wrap
               width: parent.width
-              text: "Click the star icon ⭐ on any anime in the 'All Shows' tab to track it here!"
+              text: "Click the star icon on any anime in the 'All Shows' tab to track it here."
               color: Qt.darker(root.bar.foreground, 1.4)
               font.family: root.bar.fontFamily
               font.pixelSize: Style.font.caption
@@ -557,7 +570,9 @@ Panel {
 
             Text {
               anchors.horizontalCenter: parent.horizontalCenter
-              text: "🔍"
+              text: "󰍉"
+              color: Qt.darker(root.bar.foreground, 1.4)
+              font.family: root.bar.fontFamily
               font.pixelSize: Style.space(32)
             }
 
@@ -613,182 +628,175 @@ Panel {
               radius: Style.space(6)
               readonly property bool isPinned: root.isMediaPinned(modelData.mediaId, modelData.pinned)
               color: cardArea.containsMouse
-                  ? Qt.rgba(root.bar.foreground.r, root.bar.foreground.g, root.bar.foreground.b, 0.15)
-                  : Qt.rgba(root.bar.foreground.r, root.bar.foreground.g, root.bar.foreground.b, 0.05)
+                  ? Qt.rgba(root.bar.foreground.r, root.bar.foreground.g, root.bar.foreground.b, 0.12)
+                  : Qt.rgba(root.bar.foreground.r, root.bar.foreground.g, root.bar.foreground.b, 0.04)
 
-                border.width: 1
-                border.color: cardArea.containsMouse
-                  ? Qt.rgba(root.bar.foreground.r, root.bar.foreground.g, root.bar.foreground.b, 0.25)
-                  : Qt.rgba(root.bar.foreground.r, root.bar.foreground.g, root.bar.foreground.b, 0.05)
+              border.width: 1
+              border.color: cardArea.containsMouse
+                ? Qt.rgba(root.bar.foreground.r, root.bar.foreground.g, root.bar.foreground.b, 0.22)
+                : Qt.rgba(root.bar.foreground.r, root.bar.foreground.g, root.bar.foreground.b, 0.05)
 
-                // Anime Cover Art Image
-                Rectangle {
-                  id: imgWrap
-                  width: Style.space(46)
-                  height: Style.space(56)
-                  radius: Style.space(4)
-                  anchors.left: parent.left
-                  anchors.leftMargin: Style.space(6)
-                  anchors.verticalCenter: parent.verticalCenter
-                  color: Qt.rgba(root.bar.foreground.r, root.bar.foreground.g, root.bar.foreground.b, 0.1)
-                  clip: true
+              // Anime Cover Art Image
+              Rectangle {
+                id: imgWrap
+                width: Style.space(46)
+                height: Style.space(56)
+                radius: Style.space(4)
+                anchors.left: parent.left
+                anchors.leftMargin: Style.space(6)
+                anchors.verticalCenter: parent.verticalCenter
+                color: Qt.rgba(root.bar.foreground.r, root.bar.foreground.g, root.bar.foreground.b, 0.08)
+                clip: true
 
-                  Image {
-                    anchors.fill: parent
-                    source: modelData.coverImage
-                    fillMode: Image.PreserveAspectCrop
-                    asynchronous: true
-                  }
+                Image {
+                  anchors.fill: parent
+                  source: modelData.coverImage
+                  fillMode: Image.PreserveAspectCrop
+                  asynchronous: true
+                }
+              }
+
+              // Info Column
+              Column {
+                anchors.left: imgWrap.right
+                anchors.leftMargin: Style.space(10)
+                anchors.right: pinBtn.left
+                anchors.rightMargin: Style.space(6)
+                anchors.verticalCenter: parent.verticalCenter
+                spacing: Style.space(3)
+
+                // Title (Romaji)
+                Text {
+                  text: modelData.title
+                  color: root.bar.foreground
+                  font.family: root.bar.fontFamily
+                  font.pixelSize: Style.font.body
+                  font.bold: true
+                  elide: Text.ElideRight
+                  width: parent.width
                 }
 
-                // Info Column
-                Column {
-                  anchors.left: imgWrap.right
-                  anchors.leftMargin: Style.space(10)
-                  anchors.right: pinBtn.left
-                  anchors.rightMargin: Style.space(6)
-                  anchors.verticalCenter: parent.verticalCenter
-                  spacing: Style.space(3)
+                // Secondary Title / Japanese
+                Text {
+                  text: modelData.titleNative ? modelData.titleNative : (modelData.titleEnglish ? modelData.titleEnglish : "")
+                  color: Qt.darker(root.bar.foreground, 1.4)
+                  font.family: root.bar.fontFamily
+                  font.pixelSize: Style.font.caption
+                  elide: Text.ElideRight
+                  width: parent.width
+                  visible: text.length > 0
+                }
 
-                  // Title (Romaji)
-                  Text {
-                    text: modelData.title
-                    color: root.bar.foreground
-                    font.family: root.bar.fontFamily
-                    font.pixelSize: Style.font.body
-                    font.bold: true
-                    elide: Text.ElideRight
-                    width: parent.width
+                // Badges Row (Episode + Countdown + Genre)
+                Row {
+                  spacing: Style.space(6)
+
+                  // Episode Pill
+                  Rectangle {
+                    height: Style.space(18)
+                    width: epText.implicitWidth + Style.space(10)
+                    radius: Style.space(3)
+                    color: Qt.rgba(root.bar.foreground.r, root.bar.foreground.g, root.bar.foreground.b, 0.12)
+
+                    Text {
+                      id: epText
+                      anchors.centerIn: parent
+                      text: "Ep " + modelData.episode + (modelData.totalEpisodes > 0 ? ("/" + modelData.totalEpisodes) : "")
+                      color: root.bar.foreground
+                      font.family: root.bar.fontFamily
+                      font.pixelSize: Style.font.caption
+                      font.bold: true
+                    }
                   }
 
-                  // Secondary Title / Japanese
+                  // Countdown Pill
+                  Rectangle {
+                    height: Style.space(18)
+                    width: countText.implicitWidth + Style.space(10)
+                    radius: Style.space(3)
+                    color: Qt.rgba(root.bar.foreground.r, root.bar.foreground.g, root.bar.foreground.b, 0.12)
+
+                    Text {
+                      id: countText
+                      anchors.centerIn: parent
+                      text: root.formatCountdown(modelData.airingAt)
+                      color: root.bar.foreground
+                      font.family: root.bar.fontFamily
+                      font.pixelSize: Style.font.caption
+                      font.bold: true
+                    }
+                  }
+
+                  // Genre Tag
                   Text {
-                    text: modelData.titleNative ? modelData.titleNative : (modelData.titleEnglish ? modelData.titleEnglish : "")
-                    color: Qt.darker(root.bar.foreground, 1.4)
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: (modelData.genres && modelData.genres.length > 0) ? modelData.genres.join(" · ") : ""
+                    color: Qt.darker(root.bar.foreground, 1.5)
                     font.family: root.bar.fontFamily
                     font.pixelSize: Style.font.caption
                     elide: Text.ElideRight
-                    width: parent.width
-                    visible: text.length > 0
-                  }
-
-                  // Badges Row (Episode + Countdown + Genre)
-                  Row {
-                    spacing: Style.space(6)
-
-                    // Episode Pill
-                    Rectangle {
-                      height: Style.space(18)
-                      width: epText.implicitWidth + Style.space(10)
-                      radius: Style.space(3)
-                      color: Qt.rgba(root.bar.foreground.r, root.bar.foreground.g, root.bar.foreground.b, 0.18)
-
-                      Text {
-                        id: epText
-                        anchors.centerIn: parent
-                        text: "Ep " + modelData.episode + (modelData.totalEpisodes > 0 ? ("/" + modelData.totalEpisodes) : "")
-                        color: root.bar.foreground
-                        font.family: root.bar.fontFamily
-                        font.pixelSize: Style.font.caption
-                        font.bold: true
-                      }
-                    }
-
-                    // Countdown Pill
-                    Rectangle {
-                      height: Style.space(18)
-                      width: countText.implicitWidth + Style.space(10)
-                      radius: Style.space(3)
-                      color: {
-                        var diff = modelData.airingAt - root.currentTimestamp
-                        if (diff > 0 && diff <= 3600) return Qt.rgba(0.2, 0.8, 0.4, 0.25)
-                        if (diff > 0 && diff <= 86400) return Qt.rgba(0.9, 0.7, 0.2, 0.25)
-                        return Qt.rgba(root.bar.foreground.r, root.bar.foreground.g, root.bar.foreground.b, 0.10)
-                      }
-
-                      Text {
-                        id: countText
-                        anchors.centerIn: parent
-                        text: root.formatCountdown(modelData.airingAt)
-                        color: {
-                          var diff = modelData.airingAt - root.currentTimestamp
-                          if (diff > 0 && diff <= 3600) return "#7ce38b"
-                          if (diff > 0 && diff <= 86400) return "#f7cf68"
-                          return root.bar.foreground
-                        }
-                        font.family: root.bar.fontFamily
-                        font.pixelSize: Style.font.caption
-                        font.bold: true
-                      }
-                    }
-
-                    // Genre Tag
-                    Text {
-                      anchors.verticalCenter: parent.verticalCenter
-                      text: (modelData.genres && modelData.genres.length > 0) ? modelData.genres.join(" · ") : ""
-                      color: Qt.darker(root.bar.foreground, 1.5)
-                      font.family: root.bar.fontFamily
-                      font.pixelSize: Style.font.caption
-                      elide: Text.ElideRight
-                    }
                   }
                 }
+              }
 
-                // Pin / Star Button
-                Rectangle {
-                  id: pinBtn
-                  z: 10
-                  anchors.right: parent.right
-                  anchors.rightMargin: Style.space(8)
-                  anchors.verticalCenter: parent.verticalCenter
-                  width: Style.space(34)
-                  height: Style.space(34)
-                  radius: Style.space(6)
-                  color: pinArea.containsMouse
-                    ? Qt.rgba(root.bar.foreground.r, root.bar.foreground.g, root.bar.foreground.b, 0.2)
-                    : (card.isPinned ? Qt.rgba(0.97, 0.81, 0.41, 0.15) : "transparent")
+              // Pin / Star Button
+              Rectangle {
+                id: pinBtn
+                z: 10
+                anchors.right: parent.right
+                anchors.rightMargin: Style.space(8)
+                anchors.verticalCenter: parent.verticalCenter
+                width: Style.space(34)
+                height: Style.space(34)
+                radius: Style.space(6)
+                color: pinArea.containsMouse
+                  ? Qt.rgba(root.bar.foreground.r, root.bar.foreground.g, root.bar.foreground.b, 0.18)
+                  : (card.isPinned
+                      ? Qt.rgba(root.bar.foreground.r, root.bar.foreground.g, root.bar.foreground.b, 0.10)
+                      : "transparent")
 
-                  Text {
-                    anchors.centerIn: parent
-                    text: card.isPinned ? "⭐" : "☆"
-                    color: card.isPinned ? "#f7cf68" : Qt.darker(root.bar.foreground, 1.4)
-                    font.pixelSize: Style.font.body
-                  }
-
-                  MouseArea {
-                    id: pinArea
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: {
-                      var nextState = !card.isPinned
-                      var m = Object.assign({}, root.pinnedMap)
-                      m[modelData.mediaId] = nextState
-                      root.pinnedMap = m
-                      root.triggerAction("pin", modelData.mediaId)
-                    }
-                  }
+                Text {
+                  anchors.centerIn: parent
+                  text: card.isPinned ? "󰓎" : "󰓏"
+                  color: card.isPinned ? root.bar.foreground : Qt.darker(root.bar.foreground, 1.5)
+                  font.family: root.bar.fontFamily
+                  font.pixelSize: Style.font.body
                 }
 
-                // Click Card Area (opens AniList in browser)
                 MouseArea {
-                  id: cardArea
-                  z: 1
-                  anchors.left: parent.left
-                  anchors.top: parent.top
-                  anchors.bottom: parent.bottom
-                  anchors.right: pinBtn.left
-                  anchors.rightMargin: Style.space(4)
+                  id: pinArea
+                  anchors.fill: parent
                   hoverEnabled: true
                   cursorShape: Qt.PointingHandCursor
                   onClicked: {
-                    root.triggerAction("open", modelData.siteUrl)
-                    root.close()
+                    var nextState = !card.isPinned
+                    var m = Object.assign({}, root.pinnedMap)
+                    m[modelData.mediaId] = nextState
+                    root.pinnedMap = m
+                    root.triggerAction("pin", modelData.mediaId)
                   }
+                }
+              }
+
+              // Click Card Area (opens AniList in browser)
+              MouseArea {
+                id: cardArea
+                z: 1
+                anchors.left: parent.left
+                anchors.top: parent.top
+                anchors.bottom: parent.bottom
+                anchors.right: pinBtn.left
+                anchors.rightMargin: Style.space(4)
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+                onClicked: {
+                  root.triggerAction("open", modelData.siteUrl)
+                  root.close()
                 }
               }
             }
           }
+        }
 
         // ---------- Footer Shortcut / Source Hint ----------
         Item {
