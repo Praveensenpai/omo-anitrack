@@ -353,7 +353,7 @@ Panel {
               }
 
               Text {
-                text: "All Shows (" + root.todayCount + ")"
+                text: "All Shows (" + root.allCount + ")"
                 color: root.bar.foreground
                 font.family: root.bar.fontFamily
                 font.pixelSize: Style.font.caption
