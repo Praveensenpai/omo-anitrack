@@ -275,11 +275,20 @@ Panel {
               : Qt.rgba(root.bar.foreground.r, root.bar.foreground.g, root.bar.foreground.b, 0.06)
 
             Text {
+              id: refreshIcon
               anchors.centerIn: parent
               text: "󰑐"
               color: root.bar.foreground
               font.family: root.bar.fontFamily
               font.pixelSize: Style.font.body
+
+              RotationAnimator on rotation {
+                from: 0
+                to: 360
+                duration: 750
+                loops: Animation.Infinite
+                running: actionProc.running
+              }
             }
 
             MouseArea {
@@ -287,6 +296,7 @@ Panel {
               anchors.fill: parent
               hoverEnabled: true
               cursorShape: Qt.PointingHandCursor
+              enabled: !actionProc.running
               onClicked: {
                 root.triggerAction("refresh")
               }

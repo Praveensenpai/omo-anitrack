@@ -41,7 +41,10 @@ case "${1:-}" in
     fi
     ;;
   refresh)
-    "$SCRIPT_DIR/fetch.sh"
+    if "$SCRIPT_DIR/fetch.sh"; then
+      count=$(jq -r '.allCount // (.shows | length) // 0' "$CACHE_FILE" 2>/dev/null || echo "0")
+      notify-send -a "Omo Anitrack" "Anime Schedule Updated" "Loaded $count airing shows from AniList." -t 2500 >/dev/null 2>&1 || true
+    fi
     ;;
   *)
     echo "Usage: $0 {open <url>|pin <mediaId>|refresh}"
