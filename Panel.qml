@@ -233,6 +233,7 @@ Panel {
 
             Text {
               text: "放"
+              textFormat: Text.PlainText
               color: root.bar.foreground
               font.family: root.bar.fontFamily
               font.pixelSize: Style.font.title
@@ -246,6 +247,7 @@ Panel {
 
               Text {
                 text: "ANIME SCHEDULE"
+                textFormat: Text.PlainText
                 color: root.bar.foreground
                 font.family: root.bar.fontFamily
                 font.pixelSize: Style.font.title
@@ -254,6 +256,7 @@ Panel {
 
               Text {
                 text: actionProc.running ? "● FETCHING ANILIST..." : "AIRING SCHEDULE & WATCHLIST"
+                textFormat: Text.PlainText
                 color: actionProc.running ? root.bar.foreground : Qt.darker(root.bar.foreground, 1.4)
                 font.family: root.bar.fontFamily
                 font.pixelSize: Style.font.caption
@@ -293,6 +296,7 @@ Panel {
 
             Text {
               id: refreshIcon
+              textFormat: Text.PlainText
               anchors.centerIn: parent
               text: "󰑐"
               color: root.bar.foreground
@@ -359,6 +363,7 @@ Panel {
 
               Text {
                 text: ""
+                textFormat: Text.PlainText
                 color: root.bar.foreground
                 font.family: root.bar.fontFamily
                 font.pixelSize: Style.font.caption
@@ -366,6 +371,7 @@ Panel {
 
               Text {
                 text: "Pinned (" + root.pinnedCount + ")"
+                textFormat: Text.PlainText
                 color: root.bar.foreground
                 font.family: root.bar.fontFamily
                 font.pixelSize: Style.font.caption
@@ -399,6 +405,7 @@ Panel {
 
               Text {
                 text: "放"
+                textFormat: Text.PlainText
                 color: root.bar.foreground
                 font.family: root.bar.fontFamily
                 font.pixelSize: Style.font.caption
@@ -407,6 +414,7 @@ Panel {
 
               Text {
                 text: "All Shows (" + root.allCount + ")"
+                textFormat: Text.PlainText
                 color: root.bar.foreground
                 font.family: root.bar.fontFamily
                 font.pixelSize: Style.font.caption
@@ -445,6 +453,7 @@ Panel {
 
             Text {
               text: "󰍉"
+              textFormat: Text.PlainText
               color: Qt.darker(root.bar.foreground, 1.4)
               font.family: root.bar.fontFamily
               font.pixelSize: Style.font.caption
@@ -468,6 +477,7 @@ Panel {
 
               Text {
                 anchors.fill: parent
+                textFormat: Text.PlainText
                 text: "Search anime by title or genre..."
                 color: Qt.darker(root.bar.foreground, 1.6)
                 font.family: root.bar.fontFamily
@@ -494,6 +504,7 @@ Panel {
 
             Text {
               anchors.centerIn: parent
+              textFormat: Text.PlainText
               text: "󰅖"
               color: root.bar.foreground
               font.family: root.bar.fontFamily
@@ -543,6 +554,7 @@ Panel {
 
               Text {
                 anchors.centerIn: parent
+                textFormat: Text.PlainText
                 text: modelData.label
                 color: root.dayFilter === modelData.id ? root.bar.foreground : Qt.darker(root.bar.foreground, 1.3)
                 font.family: root.bar.fontFamily
@@ -580,6 +592,7 @@ Panel {
 
             Text {
               anchors.horizontalCenter: parent.horizontalCenter
+              textFormat: Text.PlainText
               text: ""
               color: Qt.darker(root.bar.foreground, 1.4)
               font.family: root.bar.fontFamily
@@ -588,6 +601,7 @@ Panel {
 
             Text {
               anchors.horizontalCenter: parent.horizontalCenter
+              textFormat: Text.PlainText
               text: "No Pinned Anime Yet"
               color: root.bar.foreground
               font.family: root.bar.fontFamily
@@ -598,6 +612,7 @@ Panel {
             Text {
               anchors.horizontalCenter: parent.horizontalCenter
               horizontalAlignment: Text.AlignHCenter
+              textFormat: Text.PlainText
               wrapMode: Text.Wrap
               width: parent.width
               text: "Click the star icon on any anime in the 'All Shows' tab to track it here."
@@ -616,6 +631,7 @@ Panel {
 
             Text {
               anchors.horizontalCenter: parent.horizontalCenter
+              textFormat: Text.PlainText
               text: "󰍉"
               color: Qt.darker(root.bar.foreground, 1.4)
               font.family: root.bar.fontFamily
@@ -624,6 +640,7 @@ Panel {
 
             Text {
               anchors.horizontalCenter: parent.horizontalCenter
+              textFormat: Text.PlainText
               text: "No Matching Anime"
               color: root.bar.foreground
               font.family: root.bar.fontFamily
@@ -633,6 +650,7 @@ Panel {
 
             Text {
               anchors.horizontalCenter: parent.horizontalCenter
+              textFormat: Text.PlainText
               text: "No shows found for \"" + root.searchQuery + "\""
               color: Qt.darker(root.bar.foreground, 1.4)
               font.family: root.bar.fontFamily
@@ -714,6 +732,7 @@ Panel {
                 // Title (Romaji)
                 Text {
                   text: modelData.title
+                  textFormat: Text.PlainText
                   color: root.bar.foreground
                   font.family: root.bar.fontFamily
                   font.pixelSize: Style.font.body
@@ -725,6 +744,7 @@ Panel {
                 // Secondary Title / Japanese
                 Text {
                   text: modelData.titleNative ? modelData.titleNative : (modelData.titleEnglish ? modelData.titleEnglish : "")
+                  textFormat: Text.PlainText
                   color: Qt.darker(root.bar.foreground, 1.4)
                   font.family: root.bar.fontFamily
                   font.pixelSize: Style.font.caption
@@ -746,6 +766,7 @@ Panel {
 
                     Text {
                       id: epText
+                      textFormat: Text.PlainText
                       anchors.centerIn: parent
                       text: "Ep " + modelData.episode + (modelData.totalEpisodes > 0 ? ("/" + modelData.totalEpisodes) : "")
                       color: root.bar.foreground
@@ -764,6 +785,7 @@ Panel {
 
                     Text {
                       id: countText
+                      textFormat: Text.PlainText
                       anchors.centerIn: parent
                       text: root.formatCountdown(modelData.airingAt)
                       color: root.bar.foreground
@@ -775,6 +797,7 @@ Panel {
 
                   // Genre Tag
                   Text {
+                    textFormat: Text.PlainText
                     anchors.verticalCenter: parent.verticalCenter
                     text: (modelData.genres && modelData.genres.length > 0) ? modelData.genres.join(" · ") : ""
                     color: Qt.darker(root.bar.foreground, 1.5)
@@ -803,6 +826,7 @@ Panel {
 
                 Text {
                   anchors.centerIn: parent
+                  textFormat: Text.PlainText
                   text: card.isPinned ? "" : ""
                   color: card.isPinned ? root.bar.foreground : Qt.darker(root.bar.foreground, 1.5)
                   font.family: root.bar.fontFamily
@@ -851,6 +875,7 @@ Panel {
 
           Text {
             anchors.centerIn: parent
+            textFormat: Text.PlainText
             text: "Powered by AniList · Click card to open in browser"
             color: Qt.darker(root.bar.foreground, 1.6)
             font.family: root.bar.fontFamily
