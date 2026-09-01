@@ -170,9 +170,9 @@ Panel {
     }
   }
 
-  // Background fetch every 30 minutes
+  // Background fetch once every day (24 hours)
   Timer {
-    interval: 1800000
+    interval: 86400000 // 24 * 60 * 60 * 1000 ms (1 day)
     running: true
     repeat: true
     triggeredOnStart: true

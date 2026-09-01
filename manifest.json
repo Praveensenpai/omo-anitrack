@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "paisen.omo-anitrack",
   "name": "Omo Anitrack",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": "paisen",
   "description": "Anime airing schedule and countdown tracker with pinned watchlist for Omarchy Quattro.",
   "kinds": [
